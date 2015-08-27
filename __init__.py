@@ -17,7 +17,7 @@ To create a FileBrowser which prints the currently selected file as well as
 the current text in the filename field when 'Select' is pressed, with
 a shortcut to the Documents directory added to the favorites bar::
 
-    ffrom kivy.app import App
+    from kivy.app import App
     from os.path import sep, expanduser, isdir, dirname
 
     class TestApp(App):
@@ -35,10 +35,10 @@ a shortcut to the Documents directory added to the favorites bar::
             return browser
 
         def _fbrowser_canceled(self, instance):
-            print 'cancelled, Close self.'
+            print('cancelled, Close self.')
 
         def _fbrowser_success(self, instance):
-            print instance.selection
+            print(instance.selection)
 
     TestApp().run()
 
@@ -73,7 +73,7 @@ from kivy.lang import Builder
 from kivy.utils import platform
 from kivy.clock import Clock
 import string
-from os.path import sep, dirname, expanduser, isdir
+from os.path import sep, dirname, expanduser, isdir, basename
 from os import walk
 from functools import partial
 
@@ -196,8 +196,7 @@ Builder.load_string('''
         spacing: [5]
         TextInput:
             id: file_text
-            text: (root.selection and (root._shorten_filenames(\
-            root.selection) if root.multiselect else root.selection[0])) or ''
+            text: (root.selection and (root._shorten_filenames(root.selection))) or ''
             hint_text: 'Filename'
             multiline: False
         Button:
@@ -495,11 +494,11 @@ class FileBrowser(BoxLayout):
         if not len(filenames):
             return ''
         elif len(filenames) == 1:
-            return filenames[0]
+            return basename(filenames[0])
         elif len(filenames) == 2:
-            return filenames[0] + ', ' + filenames[1]
+            return basename(filenames[0]) + ', ' + basename(filenames[1])
         else:
-            return filenames[0] + ', _..._, ' + filenames[-1]
+            return basename(filenames[0]) + ', _..._, ' + basename(filenames[-1])
 
     def _attr_callback(self, attr, obj, value):
         setattr(self, attr, getattr(obj, attr))
