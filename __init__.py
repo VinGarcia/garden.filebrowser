@@ -62,6 +62,7 @@ __version__ = '1.1-dev'
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.treeview import TreeViewLabel, TreeView
 from kivy.uix.filechooser import FileChooserIconView as IconView
+from kivy.uix.filechooser import FileChooserListView as ListView
 try:
     from kivy.garden.filechooserthumbview import FileChooserThumbView as\
     IconView
@@ -112,7 +113,20 @@ def get_drives():
     return drives
 
 class FileBrowserIconView(IconView):
-    pass
+    def open_entry(self, entry):
+        super(FileBrowserIconView,self).open_entry(entry)
+
+        # Remove appended '../' strings
+        if(entry.path == u'..' + sep):
+          self.path = sep.join(self.path.split(sep)[:-3]) + sep
+
+class FileBrowserListView(ListView):
+    def open_entry(self, entry):
+        super(FileBrowserListView,self).open_entry(entry)
+
+        # Remove appended '../' strings
+        if(entry.path == u'..' + sep):
+          self.path = sep.join(self.path.split(sep)[:-3]) + sep
 
 Builder.load_string('''
 #:kivy 1.2.0
@@ -164,7 +178,7 @@ Builder.load_string('''
                 do_default_tab: False
                 TabbedPanelItem:
                     text: 'List View'
-                    FileChooserListView:
+                    FileBrowserListView:
                         id: list_view
                         path: root.path
                         filters: root.filters
