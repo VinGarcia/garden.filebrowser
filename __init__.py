@@ -74,7 +74,7 @@ from kivy.utils import platform
 from kivy.clock import Clock
 import string
 from os.path import sep, dirname, expanduser, isdir, basename
-from os import walk
+from os import walk, getcwd
 from functools import partial
 
 if platform == 'win':
@@ -117,7 +117,6 @@ class FileBrowserIconView(IconView):
 Builder.load_string('''
 #:kivy 1.2.0
 #:import metrics kivy.metrics
-#:import abspath os.path.abspath
 
 <TreeLabel>:
     on_touch_down:
@@ -158,7 +157,7 @@ Builder.load_string('''
                 height: '22dp'
                 text_size: self.size
                 padding_x: '-10dp'
-                text: abspath(root.path)
+                text: root.path
                 valign: 'middle'
             TabbedPanel:
                 id: tabbed_browser
@@ -473,6 +472,10 @@ class FileBrowser(BoxLayout):
         Clock.schedule_once(self._post_init)
 
     def _post_init(self, *largs):
+        if platform == 'win':
+            # Set the starting path to e.g.: D:
+            self.path = getcwd().split(sep,1)[0].upper() + sep
+
         self.ids.icon_view.bind(selection=partial(self._attr_callback, 'selection'),
                                 path=partial(self._attr_callback, 'path'),
                                 filters=partial(self._attr_callback, 'filters'),
