@@ -117,7 +117,7 @@ class FileBrowserIconView(IconView):
         super(FileBrowserIconView,self).open_entry(entry)
 
         # Remove appended '../' strings
-        if(entry.path == u'..' + sep):
+        if(platform == 'win' and entry.path == u'..' + sep):
           self.path = sep.join(self.path.split(sep)[:-3]) + sep
         else:
           self.path = self.path + sep
@@ -127,7 +127,7 @@ class FileBrowserListView(ListView):
         super(FileBrowserListView,self).open_entry(entry)
 
         # Remove appended '../' strings
-        if(entry.path == u'..' + sep):
+        if(platform == 'win' and entry.path == u'..' + sep):
           self.path = sep.join(self.path.split(sep)[:-3]) + sep
         else:
           self.path = self.path + sep
@@ -175,7 +175,7 @@ Builder.load_string('''
                 height: '22dp'
                 text_size: self.size
                 padding_x: '-10dp'
-                text: '' if len(root.path) < 2 else (root.path if root.path[-2] == ':' else root.path[:-1])
+                text: root.path if len(root.path) < 2 else (root.path if root.path[-2] == ':' else root.path[:-1])
                 valign: 'middle'
             TabbedPanel:
                 id: tabbed_browser
