@@ -119,6 +119,8 @@ class FileBrowserIconView(IconView):
         # Remove appended '../' strings
         if(entry.path == u'..' + sep):
           self.path = sep.join(self.path.split(sep)[:-3]) + sep
+        else:
+          self.path = self.path + sep
 
 class FileBrowserListView(ListView):
     def open_entry(self, entry):
@@ -127,6 +129,8 @@ class FileBrowserListView(ListView):
         # Remove appended '../' strings
         if(entry.path == u'..' + sep):
           self.path = sep.join(self.path.split(sep)[:-3]) + sep
+        else:
+          self.path = self.path + sep
 
 Builder.load_string('''
 #:kivy 1.2.0
@@ -171,7 +175,7 @@ Builder.load_string('''
                 height: '22dp'
                 text_size: self.size
                 padding_x: '-10dp'
-                text: root.path
+                text: '' if len(root.path) < 2 else (root.path if root.path[-2] == ':' else root.path[:-1])
                 valign: 'middle'
             TabbedPanel:
                 id: tabbed_browser
