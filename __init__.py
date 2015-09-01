@@ -156,7 +156,7 @@ Builder.load_string('''
                 size_hint_y: None
                 height: '22dp'
                 text_size: self.size
-                padding_x: '-10dp'
+                padding_x: 10
                 text: root.path
                 valign: 'middle'
             TabbedPanel:
