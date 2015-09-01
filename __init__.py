@@ -74,7 +74,7 @@ from kivy.lang import Builder
 from kivy.utils import platform
 from kivy.clock import Clock
 import string
-from os.path import sep, dirname, expanduser, isdir, basename
+from os.path import (sep, dirname, expanduser, isdir, basename, abspath)
 from os import walk, getcwd
 from functools import partial
 
@@ -117,24 +117,19 @@ class FileBrowserIconView(IconView):
         super(FileBrowserIconView,self).open_entry(entry)
 
         # Remove appended '../' strings
-        if(platform == 'win' and entry.path == u'..' + sep):
-          self.path = sep.join(self.path.split(sep)[:-3]) + sep
-        else:
-          self.path = self.path + sep
+        self.path = abspath(self.path)
 
 class FileBrowserListView(ListView):
     def open_entry(self, entry):
         super(FileBrowserListView,self).open_entry(entry)
 
         # Remove appended '../' strings
-        if(platform == 'win' and entry.path == u'..' + sep):
-          self.path = sep.join(self.path.split(sep)[:-3]) + sep
-        else:
-          self.path = self.path + sep
+        self.path = abspath(self.path)
 
 Builder.load_string('''
 #:kivy 1.2.0
 #:import metrics kivy.metrics
+#:import platform kivy.utils.platform
 
 <TreeLabel>:
     on_touch_down:
@@ -173,9 +168,9 @@ Builder.load_string('''
             Label:
                 size_hint_y: None
                 height: '22dp'
+                padding_x: -10 if platform == 'win' else 10
                 text_size: self.size
-                padding_x: '-10dp'
-                text: root.path if len(root.path) < 2 else (root.path if root.path[-2] == ':' else root.path[:-1])
+                text: root.path
                 valign: 'middle'
             TabbedPanel:
                 id: tabbed_browser
@@ -491,7 +486,7 @@ class FileBrowser(BoxLayout):
 
     def _post_init(self, *largs):
         if platform == 'win':
-            # Set the starting path to e.g.: D:
+            # Set the starting path to e.g.: D:\
             self.path = getcwd().split(sep,1)[0].upper() + sep
 
         self.ids.icon_view.bind(selection=partial(self._attr_callback, 'selection'),
